@@ -1,39 +1,39 @@
 new Vue({
-    el: '#app',
-    data: {
-      // Lista de contactos
-      contactos: [
-        { nombre: 'Juan Pérez', email: 'juan@example.com', telefono: '555123456' },
-        { nombre: 'Ana Gómez', email: 'ana@example.com', telefono: '555987654' }
-      ],
-      // Nuevo contacto a agregar
+  el: '#app',
+  data: {
+      contactos: [],
       nuevoContacto: {
-        nombre: '',
-        email: '',
-        telefono: ''
+          nombre: '',
+          email: '',
+          telefono: ''
       }
-    },
-    methods: {
-      // Método para agregar un nuevo contacto
+  },
+  created() {
+      // Cargar contactos desde LocalStorage al iniciar
+      const contactosGuardados = localStorage.getItem('contactos');
+      if (contactosGuardados) {
+          this.contactos = JSON.parse(contactosGuardados);
+      }
+  },
+  methods: {
       agregarContacto() {
-        if (this.nuevoContacto.nombre && this.nuevoContacto.email && this.nuevoContacto.telefono) {
-          this.contactos.push({ 
-            nombre: this.nuevoContacto.nombre, 
-            email: this.nuevoContacto.email, 
-            telefono: this.nuevoContacto.telefono 
-          });
-          // Limpiar los campos después de agregar
-          this.nuevoContacto.nombre = '';
-          this.nuevoContacto.email = '';
-          this.nuevoContacto.telefono = '';
-        } else {
-          alert("Por favor, complete todos los campos.");
-        }
+          if (this.nuevoContacto.nombre && this.nuevoContacto.email && this.nuevoContacto.telefono) {
+              this.contactos.push({ ...this.nuevoContacto });
+
+              // Guardar contactos en LocalStorage
+              localStorage.setItem('contactos', JSON.stringify(this.contactos));
+
+              // Limpiar formulario
+              this.nuevoContacto = { nombre: '', email: '', telefono: '' };
+          } else {
+              alert('Por favor, completa todos los campos');
+          }
       },
-      // Método para borrar un contacto
       borrarContacto(index) {
-        this.contactos.splice(index, 1);
+          this.contactos.splice(index, 1);
+
+          // Actualizar LocalStorage
+          localStorage.setItem('contactos', JSON.stringify(this.contactos));
       }
-    }
-  });
-  
+  }
+});
